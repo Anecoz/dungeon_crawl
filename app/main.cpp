@@ -1,7 +1,12 @@
 #include <iostream>
 
+#include "Game.h"
+
 int main()
 {
-  std::cout << "Hello world!" << std::endl;
+  std::cout << "Starting... " << std::endl;
+  Game game;
+  game.init();
+  game.run();
   return 0;
 }
