@@ -19,8 +19,8 @@ bool Level::init()
   }
 
   // Try make a 5x5 grid
-  for (unsigned x = 0; x < 5; ++x)
-  for (unsigned y = 0; y < 5; ++y) {
+  for (unsigned x = 0; x < 10; ++x)
+  for (unsigned y = 0; y < 10; ++y) {
     _testSprites.emplace_back();
     auto& sprite = _testSprites.back();
 
