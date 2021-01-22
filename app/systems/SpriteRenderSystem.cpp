@@ -1,5 +1,6 @@
 #include "SpriteRenderSystem.h"
 
+#include "../Constants.h"
 #include "../ecs/Engine.h"
 #include "../ecs/Entity.h"
 #include "../components/ComponentIds.h"
@@ -19,7 +20,9 @@ void SpriteRenderSystem::run(ecs::Engine& engine)
 
     if (!spriteComp || !posComp) continue;
 
-    spriteComp->_sprite.setPosition(static_cast<float>(posComp->_x), static_cast<float>(posComp->_y));
+    spriteComp->_sprite.setPosition(
+      static_cast<float>(WORLD_TO_PIXEL * posComp->_x),
+      static_cast<float>(WORLD_TO_PIXEL * posComp->_y));
     _window.draw(spriteComp->_sprite);
   }
 }

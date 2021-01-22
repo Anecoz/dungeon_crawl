@@ -1,5 +1,6 @@
 #include "TileLevelRenderSystem.h"
 
+#include "../Constants.h"
 #include "../ecs/Engine.h"
 #include "../ecs/Entity.h"
 #include "../components/ComponentIds.h"
@@ -21,8 +22,8 @@ void TileLevelRenderSystem::run(ecs::Engine& engine)
 
     for (auto& spriteTile: spriteComp->_sprites) {
       spriteTile._sprite.setPosition(
-        static_cast<float>(posComp->_x + spriteTile._x),
-        static_cast<float>(posComp->_y + spriteTile._y));
+        static_cast<float>(WORLD_TO_PIXEL * posComp->_x + spriteTile._x),
+        static_cast<float>(WORLD_TO_PIXEL * posComp->_y + spriteTile._y));
       _window.draw(spriteTile._sprite);
     }
   }
