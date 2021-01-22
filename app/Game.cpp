@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include "ecs/Engine.h"
+#include "systems/InputSystem.h"
 #include "Level.h"
 
 #include <iostream>
@@ -17,20 +19,18 @@ bool Game::init()
 
 void Game::run()
 {
+  ecs::Engine ecsEngine;
+
   Level level;
   if (!level.init()) {
     std::cerr << "Could not load level!" << std::endl;
   }
 
+  ecsEngine.addSystem(std::make_unique<InputSystem>(_window));
+
   sf::Clock clock;
   while (_window.isOpen()) {
-    // Check and act on input first
-    sf::Event event;
-    while (_window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        _window.close();
-      }
-    }
+    ecsEngine.runOnce();
 
     // Update
     sf::Time elapsed = clock.restart();
