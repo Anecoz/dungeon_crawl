@@ -55,15 +55,12 @@ void CombatSystem::run(ecs::Engine& engine)
     }
 
     // Do a post-pass and check if anyone died
-    for (auto it = entities.begin(); it != entities.end();) {
-      auto hpComp = static_cast<HealthComponent*>((*it)->getComp(HEALTH_ID));
+    for (auto it = _fighters.begin(); it != _fighters.end();) {
+      auto entity = engine.getEntityById(*it);
+      auto hpComp = static_cast<HealthComponent*>(entity->getComp(HEALTH_ID));
       if (hpComp->_health <= 0) {
-        auto idToRemove = (*it)->id();
-        _fighters.erase(std::remove_if(_fighters.begin(), _fighters.end(), [idToRemove](ecs::EntityID id) {
-          return idToRemove == id;
-        }));
-        engine.removeEntity((*it)->id());
-        it = entities.erase(it);
+        engine.removeEntity(*it);
+        it = _fighters.erase(it);
       }
       else {
         ++it;
@@ -75,14 +72,16 @@ void CombatSystem::run(ecs::Engine& engine)
       // Check so that there are unique factions involved, else they won
       std::size_t numPlayers = 0;
       std::size_t numEnemies = 0;
-      for (auto entity: entities) {
+      for (auto entityID: _fighters) {
+        auto entity = engine.getEntityById(entityID);
         auto combComp =  static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
         if (combComp->_faction == CombatComponent::Faction::Player) numPlayers++;
         else numEnemies++;
       }
 
       if (!(numPlayers > 0 && numEnemies > 0)) {
-        for (auto entity: entities) {
+        for (auto entityID: _fighters) {
+          auto entity = engine.getEntityById(entityID);
           auto combComp =  static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
           combComp->_inCombat = false;
           combComp->_awaitingInput = false;
