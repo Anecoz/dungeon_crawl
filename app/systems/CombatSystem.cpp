@@ -5,6 +5,7 @@
 #include "../components/HealthComponent.h"
 #include "../ecs/Engine.h"
 
+#include <algorithm>
 #include <string>
 #include <iostream>
 
@@ -51,6 +52,52 @@ void CombatSystem::run(ecs::Engine& engine)
         static_cast<CombatComponent*>(next->getComp(COMBAT_ID))->_awaitingInput = true;
         break;
       }
+    }
+
+    // Do a post-pass and check if anyone died
+    for (auto it = entities.begin(); it != entities.end();) {
+      auto hpComp = static_cast<HealthComponent*>((*it)->getComp(HEALTH_ID));
+      if (hpComp->_health <= 0) {
+        auto idToRemove = (*it)->id();
+        _fighters.erase(std::remove_if(_fighters.begin(), _fighters.end(), [idToRemove](ecs::EntityID id) {
+          return idToRemove == id;
+        }));
+        engine.removeEntity((*it)->id());
+        it = entities.erase(it);
+      }
+      else {
+        ++it;
+      }
+    }
+
+    // Do we after removal etc. still have a fight?
+    if (_fighters.size() > 0) {
+      // Check so that there are unique factions involved, else they won
+      std::size_t numPlayers = 0;
+      std::size_t numEnemies = 0;
+      for (auto entity: entities) {
+        auto combComp =  static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
+        if (combComp->_faction == CombatComponent::Faction::Player) numPlayers++;
+        else numEnemies++;
+      }
+
+      if (!(numPlayers > 0 && numEnemies > 0)) {
+        for (auto entity: entities) {
+          auto combComp =  static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
+          combComp->_inCombat = false;
+          combComp->_awaitingInput = false;
+          _ongoingFight = false;
+          _fighters.clear();
+        }
+      }
+    }
+    else {
+      // No one left
+      _ongoingFight = false;
+    }
+
+    if (!_ongoingFight) {
+      std::cout << "Fight is over!" << std::endl;
     }
   }
   else {
