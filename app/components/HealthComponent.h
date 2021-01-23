@@ -7,11 +7,11 @@ class HealthComponent : public ecs::Component
 {
 public:
   HealthComponent() {}
-  HealthComponent(unsigned health) : _health(health), _maxHealth(health) {}
+  HealthComponent(int health) : _health(health), _maxHealth(static_cast<unsigned>(health)) {}
   ~HealthComponent() {}
 
   COMPONENT_CLONE_AND_ID(HealthComponent, HEALTH_ID)
 
-  unsigned _health;
+  int _health;
   unsigned _maxHealth;
 };
