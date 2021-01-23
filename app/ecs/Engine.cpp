@@ -20,6 +20,16 @@ std::vector<Entity*> Engine::getEntitiesWithComp(ComponentID comp)
   return output;
 }
 
+Entity* Engine::getEntityById(EntityID id)
+{
+  for (auto& entity: _entities) {
+    if (entity.id() == id) {
+      return &entity;
+    }
+  }
+  return nullptr;
+}
+
 void Engine::addSystem(std::unique_ptr<System> system)
 {
   _systems.emplace_back(std::move(system));

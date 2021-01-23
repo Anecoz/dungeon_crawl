@@ -22,6 +22,7 @@ public:
 
   void addEntity(Entity&& entity);
   std::vector<Entity*> getEntitiesWithComp(ComponentID comp);
+  Entity* getEntityById(EntityID id);
 
   void addSystem(std::unique_ptr<System> system);
 

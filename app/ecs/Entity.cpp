@@ -18,14 +18,14 @@ Entity::Entity()
 Entity::~Entity()
 {}
 
-Entity::Entity(const Entity& other)
+/*Entity::Entity(const Entity& other)
   : _id(g_Id++)
 {
   _components.reserve(other._components.size());
   for (auto& comp : other._components) {
     _components.emplace_back(std::unique_ptr<Component>(comp->clone()));
   }
-}
+}*/
 
 Entity::Entity(Entity&& other)
   : _components(std::move(other._components))
@@ -34,7 +34,7 @@ Entity::Entity(Entity&& other)
   other._components.clear();
 }
 
-Entity& Entity::operator=(const Entity& other)
+/*Entity& Entity::operator=(const Entity& other)
 {
   if (this != &other) {
     _components.reserve(other._components.size());
@@ -44,7 +44,7 @@ Entity& Entity::operator=(const Entity& other)
     _id = g_Id++;
   }
   return *this;
-}
+}*/
 
 Entity& Entity::operator=(Entity&& other)
 {

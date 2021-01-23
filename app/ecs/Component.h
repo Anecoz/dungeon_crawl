@@ -16,3 +16,14 @@ public:
 };
 
 }
+
+// Helper macro
+#define COMPONENT_CLONE_AND_ID(name, compId) \
+ecs::Component* clone() override { \
+  auto comp = new name(); \
+  *comp = *this; \
+  return comp; \
+} \
+ecs::ComponentID id() override { \
+  return compId; \
+}

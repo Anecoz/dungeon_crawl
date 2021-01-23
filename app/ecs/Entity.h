@@ -16,10 +16,10 @@ public:
   Entity();
   ~Entity();
 
-  Entity(const Entity& other);
+  Entity(const Entity& other) = delete;
   Entity(Entity&& other);
 
-  Entity& operator=(const Entity& other);
+  Entity& operator=(const Entity& other) = delete;
   Entity& operator=(Entity&& other);
 
   EntityID id() { return _id; }

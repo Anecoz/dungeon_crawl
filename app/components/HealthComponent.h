@@ -10,16 +10,7 @@ public:
   HealthComponent(unsigned health) : _health(health), _maxHealth(health) {}
   ~HealthComponent() {}
 
-  ecs::Component* clone() override {
-    auto comp = new HealthComponent();
-    comp->_health = _health;
-    comp->_maxHealth = _maxHealth;
-    return comp;
-  }
-
-  ecs::ComponentID id() override {
-    return HEALTH_ID;
-  }
+  COMPONENT_CLONE_AND_ID(HealthComponent, HEALTH_ID)
 
   unsigned _health;
   unsigned _maxHealth;
