@@ -9,6 +9,16 @@ void Engine::addEntity(Entity&& entity)
   _entities.emplace_back(std::move(entity));
 }
 
+void Engine::removeEntity(EntityID id)
+{
+  for (auto it = _entities.begin(); it != _entities.end(); ++it) {
+    if (it->id() == id) {
+      _entities.erase(it);
+      return;
+    }
+  }
+}
+
 std::vector<Entity*> Engine::getEntitiesWithComp(ComponentID comp)
 {
   std::vector<Entity*> output;

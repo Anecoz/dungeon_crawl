@@ -21,6 +21,7 @@ public:
   Engine& operator=(Engine&&) = delete;
 
   void addEntity(Entity&& entity);
+  void removeEntity(EntityID id);
   std::vector<Entity*> getEntitiesWithComp(ComponentID comp);
   Entity* getEntityById(EntityID id);
 
