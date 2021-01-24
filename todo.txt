@@ -1,3 +1,6 @@
 2D turn based dungeon crawler with random enemies
 
-- Implement moving, should cost only if in combat
+- Implement loot drop
+- Implement scene changes, i.e. moving from room to room
+- Randomly spawn enemies
+- Armour and stats that affect damage
