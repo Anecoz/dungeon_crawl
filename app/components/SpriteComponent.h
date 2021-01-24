@@ -18,7 +18,8 @@ public:
     unsigned top,
     unsigned width,
     unsigned height) 
-    : _texPath(texPath)
+    : _orientation(Orientation::North)
+    , _texPath(texPath)
     , _scale(scale)
     , _left(left)
     , _top(top)
@@ -31,12 +32,14 @@ public:
     _sprite.setTexture(_texture);
     _sprite.setTextureRect(sf::IntRect(_left, _top, _width, _height));
     _sprite.scale(static_cast<float>(_scale), static_cast<float>(_scale));
+    _sprite.setOrigin(static_cast<float>(_width)/2.0f, static_cast<float>(_height)/2.0f);
   }
 
   ~SpriteComponent() {}
 
   ecs::Component* clone() override {
     auto comp = new SpriteComponent(_texPath, _scale, _left, _top, _width, _height);
+    comp->_orientation = _orientation;
     return comp;
   }
 
@@ -44,8 +47,43 @@ public:
     return SPRITE_ID;
   }
 
+  double rotation() {
+    switch (_orientation) {
+      case Orientation::North:
+        return 0.0;
+      case Orientation::NorthEast:
+        return 45.0;
+      case Orientation::East:
+        return 90.0;
+      case Orientation::SouthEast:
+        return 135.0;
+      case Orientation::South:
+        return 180.0;
+      case Orientation::SouthWest:
+        return 225.0;
+      case Orientation::West:
+        return 270.0;
+      case Orientation::NorthWest:
+        return 315.0;
+    }
+    return 0.0;
+  }
+
   sf::Texture _texture;
   sf::Sprite _sprite;
+
+  enum class Orientation
+  {
+    North,
+    NorthEast,
+    East,
+    SouthEast,
+    South,
+    SouthWest,
+    West,
+    NorthWest
+  } _orientation;
+
 private:
   std::string _texPath;
   double _scale;

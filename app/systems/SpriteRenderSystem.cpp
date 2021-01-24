@@ -23,6 +23,7 @@ void SpriteRenderSystem::run(ecs::Engine& engine)
     spriteComp->_sprite.setPosition(
       static_cast<float>(WORLD_TO_PIXEL * posComp->_x),
       static_cast<float>(WORLD_TO_PIXEL * posComp->_y));
+    spriteComp->_sprite.setRotation(static_cast<float>(spriteComp->rotation()));
     _window.draw(spriteComp->_sprite);
   }
 }
