@@ -4,7 +4,7 @@
 #include "../FontCache.h"
 #include "../ecs/Engine.h"
 #include "../components/ComponentIds.h"
-#include "../components/HealthComponent.h"
+#include "../components/StatComponent.h"
 #include "../components/PositionComponent.h"
 
 #include <iostream>

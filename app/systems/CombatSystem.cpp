@@ -2,7 +2,7 @@
 
 #include "../components/CombatComponent.h"
 #include "../components/AbilityComponent.h"
-#include "../components/HealthComponent.h"
+#include "../components/StatComponent.h"
 #include "../ecs/Engine.h"
 
 #include <algorithm>
@@ -57,7 +57,7 @@ void CombatSystem::run(ecs::Engine& engine)
     // Do a post-pass and check if anyone died
     for (auto it = _fighters.begin(); it != _fighters.end();) {
       auto entity = engine.getEntityById(*it);
-      auto hpComp = static_cast<HealthComponent*>(entity->getComp(HEALTH_ID));
+      auto hpComp = static_cast<StatComponent*>(entity->getComp(STAT_ID));
       if (hpComp->_health <= 0) {
         engine.removeEntity(*it);
         it = _fighters.erase(it);

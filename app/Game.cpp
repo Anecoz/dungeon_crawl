@@ -4,10 +4,12 @@
 
 #include "ecs/Engine.h"
 
+#include "Constants.h"
+
 #include "components/PositionComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/TiledSpritesComponent.h"
-#include "components/HealthComponent.h"
+#include "components/StatComponent.h"
 #include "components/CombatComponent.h"
 #include "components/PlayerInputComponent.h"
 #include "components/AbilityComponent.h"
@@ -43,7 +45,7 @@ ecs::Entity makePlayerEntity()
   auto spriteComp = std::make_unique<SpriteComponent>(
     RESOURCE_PATH + std::string("spritesheets/player-move.png"),
     2.0, 0, 0, 64, 64);
-  auto hpComp = std::make_unique<HealthComponent>(100);
+  auto hpComp = std::make_unique<StatComponent>(100);
   auto combatComp = std::make_unique<CombatComponent>(CombatComponent::Faction::Player);
   auto inputComp = std::make_unique<PlayerInputComponent>();
   auto abilityComp = std::make_unique<AbilityComponent>();
@@ -68,7 +70,7 @@ ecs::Entity makeMobEntity()
   auto spriteComp = std::make_unique<SpriteComponent>(
     RESOURCE_PATH + std::string("spritesheets/gargant-berserker-move.png"),
     2.0, 0, 0, 64, 64);    
-  auto hpComp = std::make_unique<HealthComponent>(100);
+  auto hpComp = std::make_unique<StatComponent>(100);
   auto combatComp = std::make_unique<CombatComponent>(CombatComponent::Faction::Enemy);
   auto aiComp = std::make_unique<AIComponent>();
   auto abilityComp = std::make_unique<AbilityComponent>();

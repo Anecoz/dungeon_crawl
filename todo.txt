@@ -1,6 +1,5 @@
 2D turn based dungeon crawler with random enemies
 
-- Turn entities according to engagement and movement(?)
 - Implement UI showing abilities
 - Implement ability "cost" (mana, energy, AP?)
-- Implement moving (also cost)
+- Implement moving, should cost only if in combat
