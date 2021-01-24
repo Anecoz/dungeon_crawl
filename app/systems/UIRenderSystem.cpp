@@ -19,19 +19,28 @@ void UIRenderSystem::run(ecs::Engine& engine)
 {
   auto entities = engine.getEntitiesWithComp(STAT_ID);
   for (auto& entity: entities) {
-    auto hpComp = static_cast<StatComponent*>(entity->getComp(STAT_ID));
+    auto statComp = static_cast<StatComponent*>(entity->getComp(STAT_ID));
     auto posComp = static_cast<PositionComponent*>(entity->getComp(POS_ID));
 
-    if (!hpComp || !posComp) return;
+    if (!statComp || !posComp) return;
 
     // Render the health text of the entity
-    sf::Text healthText;    
+    sf::Text healthText;
     healthText.setFont(fontcache::font());
     healthText.setCharacterSize(24);
-    healthText.setString(std::to_string(hpComp->_health) + std::string("/") + std::to_string(hpComp->_maxHealth));
+    healthText.setString(std::to_string(statComp->_health) + std::string("/") + std::to_string(statComp->_maxHealth) + std::string(" HP"));
     auto bounds = healthText.getLocalBounds();
-    healthText.setPosition(static_cast<float>((posComp->_x * WORLD_TO_PIXEL) - bounds.width/2.0f), static_cast<float>((posComp->_y - 0.7f) * WORLD_TO_PIXEL));
+    healthText.setPosition(static_cast<float>((posComp->_x * WORLD_TO_PIXEL) - bounds.width/2.0f), static_cast<float>((posComp->_y - 1.0f) * WORLD_TO_PIXEL));
     _window.draw(healthText);
+
+    // Render available AP
+    sf::Text apText;
+    apText.setFont(fontcache::font());
+    apText.setCharacterSize(24);
+    apText.setString(std::to_string(statComp->_ap) + std::string(" AP"));
+    auto apBounds = apText.getLocalBounds();
+    apText.setPosition(static_cast<float>((posComp->_x * WORLD_TO_PIXEL) - apBounds.width/2.0f), static_cast<float>((posComp->_y - 0.7f) * WORLD_TO_PIXEL));
+    _window.draw(apText);
   }
 
   // Render player's abilities

@@ -9,10 +9,14 @@
 #include <string>
 #include <iostream>
 
-void applyAbility(ecs::Entity* target, AbilityComponent::Ability& ability)
+void applyAbility(ecs::Entity* self, ecs::Entity* target, AbilityComponent::Ability& ability)
 {
   auto targetHpComp = static_cast<StatComponent*>(target->getComp(STAT_ID));
   targetHpComp->_health -= ability._damage;
+
+  // Make the ability cost
+  auto statComp = static_cast<StatComponent*>(self->getComp(STAT_ID));
+  statComp->_ap -= ability._apCost;
 }
 
 void CombatSystem::run(ecs::Engine& engine)
@@ -30,14 +34,14 @@ void CombatSystem::run(ecs::Engine& engine)
       auto combatComp = static_cast<CombatComponent*>((*it)->getComp(COMBAT_ID));
       if (combatComp->_awaitingInput && combatComp->_chosenAbility != -1) {
         // Apply the chosen ability. TODO: Deal with things like moving and fleeing? Also abilities?
-        auto abilityComp = static_cast<AbilityComponent*>((*it)->getComp(ABILITY_ID));
+        auto abilityComp = static_cast<AbilityComponent*>((*it)->getComp(ABILITY_ID));        
         if (!abilityComp) {
           std::cout << "Entity with id " << std::to_string((*it)->id()) << " tried to choose an ability, but has no ability component!" << std::endl;
           continue;
         }
 
         std::cout << "Entity with id " << std::to_string((*it)->id()) << " chose ability " << std::to_string(combatComp->_chosenAbility) << "!" << std::endl;
-        applyAbility(engine.getEntityById(combatComp->_target), abilityComp->_abilities[combatComp->_chosenAbility]);
+        applyAbility(*it, engine.getEntityById(combatComp->_target), abilityComp->_abilities[combatComp->_chosenAbility]);
 
         combatComp->_awaitingInput = false;
         combatComp->_chosenAbility = -1;
@@ -52,6 +56,8 @@ void CombatSystem::run(ecs::Engine& engine)
           next = entities[0];
         }
         std::cout << "It is now entity with id " << std::to_string(next->id()) << "'s turn!" << std::endl;
+        // Let the comp know it's awaiting input and also give 1 more AP
+        static_cast<StatComponent*>(next->getComp(STAT_ID))->_ap++;
         static_cast<CombatComponent*>(next->getComp(COMBAT_ID))->_awaitingInput = true;
         break;
       }
@@ -107,6 +113,7 @@ void CombatSystem::run(ecs::Engine& engine)
     auto entities = engine.getEntitiesWithComp(COMBAT_ID);
     for (auto entity: entities) {
       auto combatComp = static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
+      auto statComp = static_cast<StatComponent*>(entity->getComp(STAT_ID));
       if (combatComp->_faction == CombatComponent::Faction::Player) {
         // Look for enemies nearby and start a fight
         std::vector<ecs::Entity*> enemies;
@@ -125,6 +132,7 @@ void CombatSystem::run(ecs::Engine& engine)
         if (!enemies.empty()) {
           combatComp->_inCombat = true;
           combatComp->_awaitingInput = true;
+          statComp->_ap++;
           combatComp->_target = enemies[0]->id();
 
           // Update the system state

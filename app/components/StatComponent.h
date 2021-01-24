@@ -17,4 +17,5 @@ public:
 
   int _health;
   unsigned _maxHealth;
+  unsigned _ap = 0;
 };

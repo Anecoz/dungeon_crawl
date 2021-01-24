@@ -51,10 +51,10 @@ ecs::Entity makePlayerEntity()
   auto abilityComp = std::make_unique<AbilityComponent>();
 
   // Couple of abilities
-  AbilityComponent::Ability ability1(RESOURCE_PATH + std::string("ability_textures/ability1.png"), 2);
-  AbilityComponent::Ability ability2(RESOURCE_PATH + std::string("ability_textures/ability2.png"), 4);
-  AbilityComponent::Ability ability3(RESOURCE_PATH + std::string("ability_textures/ability3.png"), 10);
-  AbilityComponent::Ability ability4(RESOURCE_PATH + std::string("ability_textures/ability4.png"), 1);
+  AbilityComponent::Ability ability1(RESOURCE_PATH + std::string("ability_textures/ability1.png"), 2, 1);
+  AbilityComponent::Ability ability2(RESOURCE_PATH + std::string("ability_textures/ability2.png"), 4, 1);
+  AbilityComponent::Ability ability3(RESOURCE_PATH + std::string("ability_textures/ability3.png"), 10, 3);
+  AbilityComponent::Ability ability4(RESOURCE_PATH + std::string("ability_textures/ability4.png"), 1, 0);
 
   abilityComp->_abilities.emplace_back(std::move(ability1));
   abilityComp->_abilities.emplace_back(std::move(ability2));
@@ -82,8 +82,10 @@ ecs::Entity makeMobEntity()
   auto combatComp = std::make_unique<CombatComponent>(CombatComponent::Faction::Enemy);
   auto aiComp = std::make_unique<AIComponent>();
   auto abilityComp = std::make_unique<AbilityComponent>();
-  AbilityComponent::Ability ability(RESOURCE_PATH + std::string("ability_textures/ability1.png"), 1);
+  AbilityComponent::Ability ability(RESOURCE_PATH + std::string("ability_textures/ability1.png"), 1, 2);
+  AbilityComponent::Ability skipAbility(RESOURCE_PATH + std::string("ability_textures/ability5.png"), 0, 0);
   abilityComp->_abilities.emplace_back(std::move(ability));
+  abilityComp->_abilities.emplace_back(std::move(skipAbility));
 
   entity.addComp(std::move(hpComp));
   entity.addComp(std::move(spriteComp));

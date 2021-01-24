@@ -7,6 +7,7 @@
 #include "../components/PositionComponent.h"
 #include "../components/SpriteComponent.h"
 #include "../components/AbilityComponent.h"
+#include "../components/StatComponent.h"
 
 #include <iostream>
 
@@ -23,6 +24,7 @@ void InputSystem::run(ecs::Engine& engine)
   PositionComponent* playerPosComp = nullptr;
   SpriteComponent* playerSpriteComp = nullptr;
   AbilityComponent* playerAbComp = nullptr;
+  StatComponent* playerStatComp = nullptr;
 
   if (!entities.empty()) {
     playerEntity = entities[0];
@@ -30,6 +32,7 @@ void InputSystem::run(ecs::Engine& engine)
     playerPosComp = static_cast<PositionComponent*>(playerEntity->getComp(POS_ID));
     playerSpriteComp = static_cast<SpriteComponent*>(playerEntity->getComp(SPRITE_ID));
     playerAbComp = static_cast<AbilityComponent*>(playerEntity->getComp(ABILITY_ID));
+    playerStatComp = static_cast<StatComponent*>(playerEntity->getComp(STAT_ID));
   }
 
   sf::Event event;
@@ -50,7 +53,10 @@ void InputSystem::run(ecs::Engine& engine)
                 event.key.code == sf::Keyboard::Num5) {
               auto num = event.key.code - 27; // Num1 in the enum is 27, and the nextcoming numbers are adjacent
               if (playerAbComp->_abilities.size() > num) {
-                playerCombatComp->_chosenAbility = num;
+                // Make sure we can actually "afford" this ability in terms of AP
+                if (playerAbComp->_abilities[num]._apCost <= playerStatComp->_ap) {
+                  playerCombatComp->_chosenAbility = num;
+                }
               }
             }
           }
