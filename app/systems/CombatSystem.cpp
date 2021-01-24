@@ -9,6 +9,12 @@
 #include <string>
 #include <iostream>
 
+void applyAbility(ecs::Entity* target, AbilityComponent::Ability& ability)
+{
+  auto targetHpComp = static_cast<StatComponent*>(target->getComp(STAT_ID));
+  targetHpComp->_health -= ability._damage;
+}
+
 void CombatSystem::run(ecs::Engine& engine)
 {
   // Deal with ongoing combat
@@ -29,12 +35,9 @@ void CombatSystem::run(ecs::Engine& engine)
           std::cout << "Entity with id " << std::to_string((*it)->id()) << " tried to choose an ability, but has no ability component!" << std::endl;
           continue;
         }
-        auto target = engine.getEntityById(combatComp->_target);
-        auto targetHpComp = static_cast<HealthComponent*>(target->getComp(HEALTH_ID));
 
-        // TODO: Remove entitiy if it dies (from engine and from the list of fighters etc)
         std::cout << "Entity with id " << std::to_string((*it)->id()) << " chose ability " << std::to_string(combatComp->_chosenAbility) << "!" << std::endl;
-        targetHpComp->_health -= abilityComp->_abilities[combatComp->_chosenAbility]._damage;
+        applyAbility(engine.getEntityById(combatComp->_target), abilityComp->_abilities[combatComp->_chosenAbility]);
 
         combatComp->_awaitingInput = false;
         combatComp->_chosenAbility = -1;

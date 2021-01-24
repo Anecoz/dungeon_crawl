@@ -29,7 +29,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 Game::Game()
-  : _window(sf::VideoMode(1280, 720), "2D DC")
+  : _window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "2D DC")
 {}
 
 bool Game::init()
@@ -49,9 +49,17 @@ ecs::Entity makePlayerEntity()
   auto combatComp = std::make_unique<CombatComponent>(CombatComponent::Faction::Player);
   auto inputComp = std::make_unique<PlayerInputComponent>();
   auto abilityComp = std::make_unique<AbilityComponent>();
-  AbilityComponent::Ability ability;
-  ability._damage = 2;
-  abilityComp->_abilities.emplace_back(std::move(ability));
+
+  // Couple of abilities
+  AbilityComponent::Ability ability1(RESOURCE_PATH + std::string("ability_textures/ability1.png"), 2);
+  AbilityComponent::Ability ability2(RESOURCE_PATH + std::string("ability_textures/ability2.png"), 4);
+  AbilityComponent::Ability ability3(RESOURCE_PATH + std::string("ability_textures/ability3.png"), 10);
+  AbilityComponent::Ability ability4(RESOURCE_PATH + std::string("ability_textures/ability4.png"), 1);
+
+  abilityComp->_abilities.emplace_back(std::move(ability1));
+  abilityComp->_abilities.emplace_back(std::move(ability2));
+  abilityComp->_abilities.emplace_back(std::move(ability3));
+  abilityComp->_abilities.emplace_back(std::move(ability4));
 
   entity.addComp(std::move(hpComp));
   entity.addComp(std::move(spriteComp));
@@ -74,8 +82,7 @@ ecs::Entity makeMobEntity()
   auto combatComp = std::make_unique<CombatComponent>(CombatComponent::Faction::Enemy);
   auto aiComp = std::make_unique<AIComponent>();
   auto abilityComp = std::make_unique<AbilityComponent>();
-  AbilityComponent::Ability ability;
-  ability._damage = 1;
+  AbilityComponent::Ability ability(RESOURCE_PATH + std::string("ability_textures/ability1.png"), 1);
   abilityComp->_abilities.emplace_back(std::move(ability));
 
   entity.addComp(std::move(hpComp));
