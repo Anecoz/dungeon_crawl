@@ -3,6 +3,8 @@
 #include "../components/CombatComponent.h"
 #include "../components/AbilityComponent.h"
 #include "../components/StatComponent.h"
+#include "../components/PositionComponent.h"
+#include "../components/SpriteComponent.h"
 #include "../ecs/Engine.h"
 
 #include <algorithm>
@@ -11,8 +13,51 @@
 
 void applyAbility(ecs::Entity* self, ecs::Entity* target, AbilityComponent::Ability& ability)
 {
-  auto targetHpComp = static_cast<StatComponent*>(target->getComp(STAT_ID));
-  targetHpComp->_health -= ability._damage;
+  switch (ability._type) {
+    case AbilityComponent::Ability::Type::Damage:
+    {
+      auto targetHpComp = static_cast<StatComponent*>(target->getComp(STAT_ID));
+      targetHpComp->_health -= ability._damage;
+      break;
+    }
+    case AbilityComponent::Ability::Type::Move:
+    {
+      auto posComp = static_cast<PositionComponent*>(self->getComp(POS_ID));
+      auto spriteComp = static_cast<SpriteComponent*>(self->getComp(SPRITE_ID));
+      switch (ability._movedOrientation) {
+        case Orientation::North:
+          posComp->_y -= 1.0f;
+          break;
+        case Orientation::NorthEast:
+          posComp->_y -= 1.0f;
+          posComp->_x += 1.0f;
+          break;
+        case Orientation::East:
+          posComp->_x += 1.0f;
+          break;
+        case Orientation::SouthEast:
+          posComp->_y += 1.0f;
+          posComp->_x += 1.0f;
+          break;
+        case Orientation::South:
+          posComp->_y += 1.0f;
+          break;
+        case Orientation::SouthWest:
+          posComp->_y += 1.0f;
+          posComp->_x -= 1.0f;
+          break;
+        case Orientation::West:
+          posComp->_x -= 1.0f;
+          break;
+        case Orientation::NorthWest:
+          posComp->_y -= 1.0f;
+          posComp->_x -= 1.0f;
+          break;
+      }
+      spriteComp->_orientation = ability._movedOrientation;
+      break;
+    }
+  }
 
   // Make the ability cost
   auto statComp = static_cast<StatComponent*>(self->getComp(STAT_ID));

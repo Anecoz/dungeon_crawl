@@ -55,11 +55,14 @@ ecs::Entity makePlayerEntity()
   AbilityComponent::Ability ability2(RESOURCE_PATH + std::string("ability_textures/ability2.png"), 4, 1);
   AbilityComponent::Ability ability3(RESOURCE_PATH + std::string("ability_textures/ability3.png"), 10, 3);
   AbilityComponent::Ability ability4(RESOURCE_PATH + std::string("ability_textures/ability4.png"), 1, 0);
+  AbilityComponent::Ability ability5(RESOURCE_PATH + std::string("ability_textures/ability5.png"), 0, 1);
+  ability5._type = AbilityComponent::Ability::Type::Move;
 
   abilityComp->_abilities.emplace_back(std::move(ability1));
   abilityComp->_abilities.emplace_back(std::move(ability2));
   abilityComp->_abilities.emplace_back(std::move(ability3));
   abilityComp->_abilities.emplace_back(std::move(ability4));
+  abilityComp->_abilities.emplace_back(std::move(ability5));
 
   entity.addComp(std::move(hpComp));
   entity.addComp(std::move(spriteComp));

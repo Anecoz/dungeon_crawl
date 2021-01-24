@@ -63,8 +63,30 @@ void InputSystem::run(ecs::Engine& engine)
               auto num = event.key.code - 27; // Num1 in the enum is 27, and the nextcoming numbers are adjacent
               if (playerAbComp->_abilities.size() > num) {
                 // Make sure we can actually "afford" this ability in terms of AP
-                if (playerAbComp->_abilities[num]._apCost <= playerStatComp->_ap) {
+                if (playerAbComp->_abilities[num]._apCost <= playerStatComp->_ap &&
+                    playerAbComp->_abilities[num]._type != AbilityComponent::Ability::Type::Move) {
                   playerCombatComp->_chosenAbility = num;
+                }
+              }
+            }
+            // Check if we're pressing a movement key and if we have a move ability in that case
+            if (isMovementKey(event.key.code)) {
+              for (std::size_t i = 0; i < playerAbComp->_abilities.size(); ++i) {
+                auto& ability = playerAbComp->_abilities[i];
+                if (ability._type == AbilityComponent::Ability::Type::Move && ability._apCost <= playerStatComp->_ap) {
+                  playerCombatComp->_chosenAbility = (int)i;
+                  if (event.key.code == sf::Keyboard::D) {
+                    ability._movedOrientation = Orientation::East;
+                  }
+                  else if (event.key.code == sf::Keyboard::A) {
+                    ability._movedOrientation = Orientation::West;
+                  }
+                  else if (event.key.code == sf::Keyboard::W) {
+                    ability._movedOrientation = Orientation::North;
+                  }
+                  else if (event.key.code == sf::Keyboard::S) {
+                    ability._movedOrientation = Orientation::South;
+                  }
                 }
               }
             }

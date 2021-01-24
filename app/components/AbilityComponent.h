@@ -15,7 +15,9 @@ public:
   struct Ability
   {
     Ability(const std::string& texPath, int damage, unsigned apCost)
-      : _damage(damage)
+      : _type(Type::Damage)
+      , _damage(damage)
+      , _movedOrientation(Orientation::North)
       , _apCost(apCost)
       , _texPath(texPath)
     {
@@ -24,7 +26,9 @@ public:
     }
 
     Ability(Ability&& other)
-      : _damage(std::move(other._damage))
+      : _type(other._type)
+      , _damage(std::move(other._damage))
+      , _movedOrientation(other._movedOrientation)
       , _apCost(std::move(other._apCost))
       , _texPath(std::move(other._texPath))
       , _texture(std::move(other._texture))
@@ -32,19 +36,18 @@ public:
       _sprite.setTexture(_texture);
     }
 
-    Ability& operator=(Ability&& other)
+    enum class Type
     {
-      if (this != &other) {
-        _damage = std::move(other._damage);
-        _apCost = std::move(other._apCost);
-        _texPath = std::move(other._texPath);
-        _texture = std::move(other._texture);
-        _sprite.setTexture(_texture);
-      }
-      return *this;
-    }
+      Damage,
+      Move
+    } _type;
 
+    // Damage type stuff
     int _damage;
+
+    // Move type stuff
+    Orientation _movedOrientation;
+
     unsigned _apCost;
 
     std::string _texPath;
@@ -59,6 +62,8 @@ public:
     auto comp = new AbilityComponent();
     for (auto& ability: _abilities) {
       Ability clonedAb(ability._texPath, ability._damage, ability._apCost);
+      clonedAb._type = ability._type;
+      clonedAb._movedOrientation = ability._movedOrientation;
       comp->_abilities.emplace_back(std::move(clonedAb));
     }
     return comp;
