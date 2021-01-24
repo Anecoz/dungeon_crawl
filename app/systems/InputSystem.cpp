@@ -82,20 +82,22 @@ void InputSystem::run(ecs::Engine& engine)
           }
         }
         else {
-          // not in combat TODO: Check bounds?
-          if (event.key.code == sf::Keyboard::D) {
-            playerPosComp->_x += 1.0;
-          }
-          else if (event.key.code == sf::Keyboard::A) {
-            playerPosComp->_x -= 1.0;
-          }
-          else if (event.key.code == sf::Keyboard::W) {
-            playerPosComp->_y -= 1.0;
-          }
-          else if (event.key.code == sf::Keyboard::S) {
-            playerPosComp->_y += 1.0;
-          }
-          playerSpriteComp->_orientation = keyToOrientation(event.key.code);
+          if (isMovementKey(event.key.code)) {
+            // not in combat TODO: Check bounds?
+            if (event.key.code == sf::Keyboard::D) {
+              playerPosComp->_x += 1.0;
+            }
+            else if (event.key.code == sf::Keyboard::A) {
+              playerPosComp->_x -= 1.0;
+            }
+            else if (event.key.code == sf::Keyboard::W) {
+              playerPosComp->_y -= 1.0;
+            }
+            else if (event.key.code == sf::Keyboard::S) {
+              playerPosComp->_y += 1.0;
+            }
+            playerSpriteComp->_orientation = keyToOrientation(event.key.code);
+          }          
         }
       }      
     }
