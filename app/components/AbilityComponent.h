@@ -26,8 +26,8 @@ public:
       : _damage(std::move(other._damage))
       , _apCost(std::move(other._apCost))
       , _texPath(std::move(other._texPath))
+      , _texture(std::move(other._texture))
     {
-      _texture.loadFromFile(_texPath);
       _sprite.setTexture(_texture);
     }
 
@@ -37,28 +37,7 @@ public:
         _damage = std::move(other._damage);
         _apCost = std::move(other._apCost);
         _texPath = std::move(other._texPath);
-        _texture.loadFromFile(_texPath);
-        _sprite.setTexture(_texture);
-      }
-      return *this;
-    }
-
-    Ability(const Ability& other)
-      : _damage(other._damage)
-      , _apCost(other._apCost)
-      , _texPath(other._texPath)
-    {
-      _texture.loadFromFile(_texPath);
-      _sprite.setTexture(_texture);
-    }
-
-    Ability& operator=(const Ability& other) 
-    {
-      if (this != &other) {
-        _damage = other._damage;
-        _apCost = other._apCost;
-        _texPath = other._texPath;
-        _texture.loadFromFile(_texPath);
+        _texture = std::move(other._texture);
         _sprite.setTexture(_texture);
       }
       return *this;
