@@ -75,18 +75,7 @@ void InputSystem::run(ecs::Engine& engine)
                 auto& ability = playerAbComp->_abilities[i];
                 if (ability._type == AbilityComponent::Ability::Type::Move && ability._apCost <= playerStatComp->_ap) {
                   playerCombatComp->_chosenAbility = (int)i;
-                  if (event.key.code == sf::Keyboard::D) {
-                    ability._movedOrientation = Orientation::East;
-                  }
-                  else if (event.key.code == sf::Keyboard::A) {
-                    ability._movedOrientation = Orientation::West;
-                  }
-                  else if (event.key.code == sf::Keyboard::W) {
-                    ability._movedOrientation = Orientation::North;
-                  }
-                  else if (event.key.code == sf::Keyboard::S) {
-                    ability._movedOrientation = Orientation::South;
-                  }
+                  ability._movedOrientation = keyToOrientation(event.key.code);
                 }
               }
             }
@@ -96,20 +85,17 @@ void InputSystem::run(ecs::Engine& engine)
           // not in combat TODO: Check bounds?
           if (event.key.code == sf::Keyboard::D) {
             playerPosComp->_x += 1.0;
-            playerSpriteComp->_orientation = Orientation::East;
           }
           else if (event.key.code == sf::Keyboard::A) {
             playerPosComp->_x -= 1.0;
-            playerSpriteComp->_orientation = Orientation::West;
           }
           else if (event.key.code == sf::Keyboard::W) {
             playerPosComp->_y -= 1.0;
-            playerSpriteComp->_orientation = Orientation::North;
           }
           else if (event.key.code == sf::Keyboard::S) {
             playerPosComp->_y += 1.0;
-            playerSpriteComp->_orientation = Orientation::South;
           }
+          playerSpriteComp->_orientation = keyToOrientation(event.key.code);
         }
       }      
     }
