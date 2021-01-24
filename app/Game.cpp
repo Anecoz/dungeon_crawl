@@ -86,7 +86,12 @@ ecs::Entity makeMobEntity()
   auto aiComp = std::make_unique<AIComponent>();
   auto abilityComp = std::make_unique<AbilityComponent>();
   AbilityComponent::Ability ability(RESOURCE_PATH + std::string("ability_textures/ability1.png"), 1, 2);
-  AbilityComponent::Ability skipAbility(RESOURCE_PATH + std::string("ability_textures/ability5.png"), 0, 0);
+  AbilityComponent::Ability skipAbility(RESOURCE_PATH + std::string("ability_textures/ability4.png"), 0, 0);
+  AbilityComponent::Ability moveAbility(RESOURCE_PATH + std::string("ability_textures/ability5.png"), 0, 2);
+  moveAbility._type = AbilityComponent::Ability::Type::Move;
+  skipAbility._type = AbilityComponent::Ability::Type::Pacifist;
+
+  abilityComp->_abilities.emplace_back(std::move(moveAbility));
   abilityComp->_abilities.emplace_back(std::move(ability));
   abilityComp->_abilities.emplace_back(std::move(skipAbility));
 

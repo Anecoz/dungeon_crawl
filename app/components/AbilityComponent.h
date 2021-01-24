@@ -39,7 +39,8 @@ public:
     enum class Type
     {
       Damage,
-      Move
+      Move,
+      Pacifist
     } _type;
 
     // Damage type stuff
