@@ -1,5 +1,6 @@
 #include "InputSystem.h"
 
+#include "../Orientation.h"
 #include "../ecs/Engine.h"
 #include "../ecs/Entity.h"
 #include "../components/PlayerInputComponent.h"
@@ -14,6 +15,14 @@
 InputSystem::InputSystem(sf::RenderWindow& window)
   : _window(window)
 {}
+
+static bool isMovementKey(sf::Keyboard::Key key)
+{
+  return key == sf::Keyboard::D ||
+         key == sf::Keyboard::S ||
+         key == sf::Keyboard::A ||
+         key == sf::Keyboard::W;
+}
 
 void InputSystem::run(ecs::Engine& engine)
 {
@@ -65,19 +74,19 @@ void InputSystem::run(ecs::Engine& engine)
           // not in combat TODO: Check bounds?
           if (event.key.code == sf::Keyboard::D) {
             playerPosComp->_x += 1.0;
-            playerSpriteComp->_orientation = SpriteComponent::Orientation::East;
+            playerSpriteComp->_orientation = Orientation::East;
           }
           else if (event.key.code == sf::Keyboard::A) {
             playerPosComp->_x -= 1.0;
-            playerSpriteComp->_orientation = SpriteComponent::Orientation::West;
+            playerSpriteComp->_orientation = Orientation::West;
           }
           else if (event.key.code == sf::Keyboard::W) {
             playerPosComp->_y -= 1.0;
-            playerSpriteComp->_orientation = SpriteComponent::Orientation::North;
+            playerSpriteComp->_orientation = Orientation::North;
           }
           else if (event.key.code == sf::Keyboard::S) {
             playerPosComp->_y += 1.0;
-            playerSpriteComp->_orientation = SpriteComponent::Orientation::South;
+            playerSpriteComp->_orientation = Orientation::South;
           }
         }
       }      

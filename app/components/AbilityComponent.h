@@ -2,6 +2,7 @@
 
 #include "../ecs/Component.h"
 #include "ComponentIds.h"
+#include "../Orientation.h"
 
 #include <SFML/Graphics.hpp>
 

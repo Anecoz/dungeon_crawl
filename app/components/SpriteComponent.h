@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ecs/Component.h"
+#include "../Orientation.h"
 #include "ComponentIds.h"
 
 #include <SFML/Graphics.hpp>
@@ -72,17 +73,7 @@ public:
   sf::Texture _texture;
   sf::Sprite _sprite;
 
-  enum class Orientation
-  {
-    North,
-    NorthEast,
-    East,
-    SouthEast,
-    South,
-    SouthWest,
-    West,
-    NorthWest
-  } _orientation;
+  Orientation _orientation;
 
 private:
   std::string _texPath;
