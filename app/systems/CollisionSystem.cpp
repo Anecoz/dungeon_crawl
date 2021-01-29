@@ -28,17 +28,21 @@ void CollisionSystem::run(ecs::Engine& engine)
   auto player = playerEntities[0];
   auto playerPosComp = static_cast<PositionComponent*>(player->getComp(POS_ID));
   auto pickups = engine.getEntitiesWithComp(PICKUP_ID);
-  for (auto it = pickups.begin(); it != pickups.end();) {
-    auto pickup = *it;
+
+  // Keep track of which entities to delete. If we delete immediately, the entity* addresses get
+  // corrupt because they are reshuffled inside of the engine
+  std::vector<ecs::EntityID> pendingDelete;
+  for (auto pickup: pickups) {
     auto pickupPosComp = static_cast<PositionComponent*>(pickup->getComp(POS_ID));
 
     if (helpers::distance(playerPosComp, pickupPosComp) <= 0.9) {
       applyPickup(player, pickup);
-      engine.removeEntity(pickup->id());
-      it = pickups.erase(it);
+      pendingDelete.push_back(pickup->id());
     }
-    else {
-      ++it;
-    }
+  }
+
+  // Delete last, see comment above (maybe fix)
+  for (auto id: pendingDelete) {
+    engine.removeEntity(id);
   }
 }

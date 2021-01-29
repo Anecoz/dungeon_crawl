@@ -143,8 +143,8 @@ void Game::run()
 
   ecsEngine.addEntity(makePlayerEntity());
   ecsEngine.addEntity(makeLevelEntity());
-  ecsEngine.addEntity(makeMobEntity(5.0, 3.0));
-  ecsEngine.addEntity(makeMobEntity(4.0, 3.0));
+  ecsEngine.addEntity(makeMobEntity(5.0, 3.0, true));
+  ecsEngine.addEntity(makeMobEntity(4.0, 3.0, true));
   ecsEngine.addEntity(makeMobEntity(4.0, 4.0, true));
 
   sf::Clock clock;
