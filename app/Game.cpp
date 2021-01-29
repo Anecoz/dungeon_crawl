@@ -14,6 +14,7 @@
 #include "components/PlayerInputComponent.h"
 #include "components/AbilityComponent.h"
 #include "components/AIComponent.h"
+#include "components/LootComponent.h"
 
 #include "systems/InputSystem.h"
 #include "systems/SpriteRenderSystem.h"
@@ -21,8 +22,7 @@
 #include "systems/UIRenderSystem.h"
 #include "systems/CombatSystem.h"
 #include "systems/AISystem.h"
-
-#include "Level.h"
+#include "systems/LootSystem.h"
 
 #include <iostream>
 
@@ -54,7 +54,7 @@ ecs::Entity makePlayerEntity()
   AbilityComponent::Ability ability1(RESOURCE_PATH + std::string("ability_textures/ability1.png"), 2, 1);
   AbilityComponent::Ability ability2(RESOURCE_PATH + std::string("ability_textures/ability2.png"), 4, 1);
   AbilityComponent::Ability ability3(RESOURCE_PATH + std::string("ability_textures/ability3.png"), 10, 3);
-  AbilityComponent::Ability ability4(RESOURCE_PATH + std::string("ability_textures/ability4.png"), 1, 0);
+  AbilityComponent::Ability ability4(RESOURCE_PATH + std::string("ability_textures/ability4.png"), 50, 0);
   AbilityComponent::Ability ability5(RESOURCE_PATH + std::string("ability_textures/ability5.png"), 0, 1);
   ability5._type = AbilityComponent::Ability::Type::Move;
 
@@ -73,7 +73,7 @@ ecs::Entity makePlayerEntity()
   return entity;
 }
 
-ecs::Entity makeMobEntity(double startX, double startY)
+ecs::Entity makeMobEntity(double startX, double startY, bool loot = false)
 {
   ecs::Entity entity;
 
@@ -94,6 +94,10 @@ ecs::Entity makeMobEntity(double startX, double startY)
   abilityComp->_abilities.emplace_back(std::move(moveAbility));
   abilityComp->_abilities.emplace_back(std::move(ability));
   abilityComp->_abilities.emplace_back(std::move(skipAbility));
+
+  if (loot) {
+    entity.addComp(std::make_unique<LootComponent>());
+  }
 
   entity.addComp(std::move(hpComp));
   entity.addComp(std::move(spriteComp));
@@ -130,11 +134,13 @@ void Game::run()
   ecsEngine.addSystem(std::make_unique<UIRenderSystem>(_window));
   ecsEngine.addSystem(std::make_unique<CombatSystem>());
   ecsEngine.addSystem(std::make_unique<AISystem>());
+  ecsEngine.addSystem(std::make_unique<LootSystem>());
 
   ecsEngine.addEntity(makePlayerEntity());
   ecsEngine.addEntity(makeLevelEntity());
   ecsEngine.addEntity(makeMobEntity(5.0, 3.0));
   ecsEngine.addEntity(makeMobEntity(4.0, 3.0));
+  ecsEngine.addEntity(makeMobEntity(4.0, 4.0, true));
 
   sf::Clock clock;
   while (_window.isOpen()) {

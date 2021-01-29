@@ -8,3 +8,5 @@
 #define ABILITY_ID 5
 #define PLAYER_INPUT_ID 6
 #define AI_ID 7
+#define EVENT_ID 8
+#define LOOT_ID 9

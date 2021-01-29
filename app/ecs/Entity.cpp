@@ -74,6 +74,19 @@ Component* Entity::getComp(ComponentID compId)
   return nullptr;
 }
 
+std::unique_ptr<Component> Entity::takeComp(ComponentID compId)
+{
+  for (auto it = _components.begin(); it != _components.end();) {
+    if ((*it)->id() == compId) {
+      auto comp = std::move(_components[it - _components.begin()]);
+      it = _components.erase(it);
+      return std::move(comp);
+    }
+    ++it;
+  }
+  return nullptr;
+}
+
 void Entity::addComp(std::unique_ptr<Component> comp)
 {
   if (hasComp(comp->id())) {

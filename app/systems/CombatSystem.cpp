@@ -5,6 +5,8 @@
 #include "../components/StatComponent.h"
 #include "../components/PositionComponent.h"
 #include "../components/SpriteComponent.h"
+#include "../components/EventComponent.h"
+#include "../components/LootComponent.h"
 #include "../ecs/Engine.h"
 
 #include <algorithm>
@@ -66,12 +68,14 @@ void applyAbility(ecs::Entity* self, ecs::Entity* target, AbilityComponent::Abil
 
 static void makeNextTurn(ecs::Entity* entity)
 {
+  // Give one ap and set the appropriate flag in combat component
   static_cast<StatComponent*>(entity->getComp(STAT_ID))->_ap++;
   static_cast<CombatComponent*>(entity->getComp(COMBAT_ID))->_awaitingInput = true;
 }
 
 static void ensureTargets(const std::vector<ecs::EntityID>& fighters, ecs::Engine& engine)
 {
+  // Ensure all fighters have targets that still exist (in the provided list)
   for (auto id: fighters) {
     auto entity = engine.getEntityById(id);
     auto combatComp = static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
@@ -89,6 +93,38 @@ static void ensureTargets(const std::vector<ecs::EntityID>& fighters, ecs::Engin
           break;
         }
       }
+    }
+  }
+}
+
+static void cleanseDead(std::vector<ecs::EntityID>& fighters, ecs::Engine& engine)
+{
+  // Go through list and see if anyone has 0 or less HP
+  // If anyone did in fact die, send an "entity event" of the death so that other systems
+  // can do the appropriate thing, like spawn loot
+  for (auto it = fighters.begin(); it != fighters.end();) {
+    auto entity = engine.getEntityById(*it);
+    auto hpComp = static_cast<StatComponent*>(entity->getComp(STAT_ID));
+    if (hpComp->_health <= 0) {
+      if (auto lootBaseComp = entity->takeComp(LOOT_ID)) {
+        // Create an "event entity"
+        ecs::Entity event;
+        auto eventComp = std::make_unique<EventComponent>();
+        eventComp->_type = EventComponent::Type::Death;
+        auto lootComp = std::unique_ptr<LootComponent>(static_cast<LootComponent*>(lootBaseComp.release()));
+        eventComp->_lootComp = std::move(lootComp);
+        event.addComp(std::move(eventComp));
+        engine.addEntity(std::move(event));
+      }      
+
+      // Remove the dead entity from the engine
+      engine.removeEntity(*it);
+
+      // Erase from provided list
+      it = fighters.erase(it);      
+    }
+    else {
+      ++it;
     }
   }
 }
@@ -113,8 +149,8 @@ void CombatSystem::run(ecs::Engine& engine)
         std::cout << "Entity with id " << std::to_string(entity->id()) << " chose ability " << std::to_string(combatComp->_chosenAbility) << "!" << std::endl;
         applyAbility(entity, engine.getEntityById(combatComp->_target), abilityComp->_abilities[combatComp->_chosenAbility]);
 
+        // Remember for later who fought this round, also make sure it's not his turn anymore
         thisRoundFighter = *it;
-
         combatComp->_awaitingInput = false;
         combatComp->_chosenAbility = -1;
 
@@ -135,17 +171,7 @@ void CombatSystem::run(ecs::Engine& engine)
     }
 
     // Do a post-pass and check if anyone died
-    for (auto it = _fighters.begin(); it != _fighters.end();) {
-      auto entity = engine.getEntityById(*it);
-      auto hpComp = static_cast<StatComponent*>(entity->getComp(STAT_ID));
-      if (hpComp->_health <= 0) {
-        engine.removeEntity(*it);
-        it = _fighters.erase(it);
-      }
-      else {
-        ++it;
-      }
-    }
+    cleanseDead(_fighters, engine);
 
     // Do we after removal etc. still have a fight?
     if (_fighters.size() > 0) {
@@ -159,6 +185,7 @@ void CombatSystem::run(ecs::Engine& engine)
         else numEnemies++;
       }
 
+      // Do we have at least one of each faction?
       if (!(numPlayers > 0 && numEnemies > 0)) {
         for (auto entityID: _fighters) {
           std::cout << "Fight is over!" << std::endl;

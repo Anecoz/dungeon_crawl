@@ -26,6 +26,7 @@ public:
 
   bool hasComp(ComponentID compId) const;
   Component* getComp(ComponentID compId);
+  std::unique_ptr<Component> takeComp(ComponentID compId);
   void addComp(std::unique_ptr<Component> comp);
   void removeComp(ComponentID compId);
 
