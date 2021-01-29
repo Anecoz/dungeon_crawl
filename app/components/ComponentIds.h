@@ -10,3 +10,4 @@
 #define AI_ID 7
 #define EVENT_ID 8
 #define LOOT_ID 9
+#define PICKUP_ID 10

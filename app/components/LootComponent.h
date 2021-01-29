@@ -11,5 +11,9 @@ public:
 
   COMPONENT_CLONE_AND_ID(LootComponent, LOOT_ID)
 
-  int _coolLoot = 420;
+  enum class Type {
+    Health
+  } _type;
+
+  unsigned _hp;
 };

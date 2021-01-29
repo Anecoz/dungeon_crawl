@@ -23,6 +23,7 @@
 #include "systems/CombatSystem.h"
 #include "systems/AISystem.h"
 #include "systems/LootSystem.h"
+#include "systems/CollisionSystem.h"
 
 #include <iostream>
 
@@ -96,7 +97,10 @@ ecs::Entity makeMobEntity(double startX, double startY, bool loot = false)
   abilityComp->_abilities.emplace_back(std::move(skipAbility));
 
   if (loot) {
-    entity.addComp(std::make_unique<LootComponent>());
+    auto lootComp = std::make_unique<LootComponent>();
+    lootComp->_type = LootComponent::Type::Health;
+    lootComp->_hp = 10;
+    entity.addComp(std::move(lootComp));
   }
 
   entity.addComp(std::move(hpComp));
@@ -135,6 +139,7 @@ void Game::run()
   ecsEngine.addSystem(std::make_unique<CombatSystem>());
   ecsEngine.addSystem(std::make_unique<AISystem>());
   ecsEngine.addSystem(std::make_unique<LootSystem>());
+  ecsEngine.addSystem(std::make_unique<CollisionSystem>());
 
   ecsEngine.addEntity(makePlayerEntity());
   ecsEngine.addEntity(makeLevelEntity());

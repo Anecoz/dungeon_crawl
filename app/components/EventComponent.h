@@ -3,6 +3,7 @@
 #include "../ecs/Component.h"
 #include "ComponentIds.h"
 #include "LootComponent.h"
+#include "PositionComponent.h"
 
 #include <memory>
 
@@ -15,6 +16,7 @@ public:
   ecs::Component* clone() override {
     auto comp = new EventComponent();
     comp->_lootComp = std::unique_ptr<LootComponent>(static_cast<LootComponent*>(_lootComp->clone()));
+    comp->_posComp = std::unique_ptr<PositionComponent>(static_cast<PositionComponent*>(_posComp->clone()));
     return comp;
   }
 
@@ -28,5 +30,6 @@ public:
   } _type;
 
   std::unique_ptr<LootComponent> _lootComp;
+  std::unique_ptr<PositionComponent> _posComp;
 
 };

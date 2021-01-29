@@ -112,7 +112,10 @@ static void cleanseDead(std::vector<ecs::EntityID>& fighters, ecs::Engine& engin
         auto eventComp = std::make_unique<EventComponent>();
         eventComp->_type = EventComponent::Type::Death;
         auto lootComp = std::unique_ptr<LootComponent>(static_cast<LootComponent*>(lootBaseComp.release()));
+        auto posBaseComp = entity->takeComp(POS_ID);
+        auto posComp = std::unique_ptr<PositionComponent>(static_cast<PositionComponent*>(posBaseComp.release()));
         eventComp->_lootComp = std::move(lootComp);
+        eventComp->_posComp = std::move(posComp);
         event.addComp(std::move(eventComp));
         engine.addEntity(std::move(event));
       }      
