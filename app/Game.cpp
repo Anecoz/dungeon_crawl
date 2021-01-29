@@ -73,11 +73,11 @@ ecs::Entity makePlayerEntity()
   return entity;
 }
 
-ecs::Entity makeMobEntity()
+ecs::Entity makeMobEntity(double startX, double startY)
 {
   ecs::Entity entity;
 
-  auto posComp = std::make_unique<PositionComponent>(5.0, 3.0);
+  auto posComp = std::make_unique<PositionComponent>(startX, startY);
   auto spriteComp = std::make_unique<SpriteComponent>(
     RESOURCE_PATH + std::string("spritesheets/gargant-berserker-move.png"),
     2.0, 0, 0, 64, 64);    
@@ -133,7 +133,8 @@ void Game::run()
 
   ecsEngine.addEntity(makePlayerEntity());
   ecsEngine.addEntity(makeLevelEntity());
-  ecsEngine.addEntity(makeMobEntity());
+  ecsEngine.addEntity(makeMobEntity(5.0, 3.0));
+  ecsEngine.addEntity(makeMobEntity(4.0, 3.0));
 
   sf::Clock clock;
   while (_window.isOpen()) {
