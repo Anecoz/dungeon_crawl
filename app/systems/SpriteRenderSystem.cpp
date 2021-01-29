@@ -21,8 +21,8 @@ void SpriteRenderSystem::run(ecs::Engine& engine)
     if (!spriteComp || !posComp) continue;
 
     spriteComp->_sprite.setPosition(
-      static_cast<float>(WORLD_TO_PIXEL * posComp->_x),
-      static_cast<float>(WORLD_TO_PIXEL * posComp->_y));
+      static_cast<float>(WORLD_TO_PIXEL_X * posComp->_x),
+      static_cast<float>(WORLD_TO_PIXEL_Y * posComp->_y));
     spriteComp->_sprite.setRotation(static_cast<float>(spriteComp->rotation()));
     _window.draw(spriteComp->_sprite);
   }

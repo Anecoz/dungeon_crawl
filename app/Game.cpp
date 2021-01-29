@@ -45,7 +45,7 @@ ecs::Entity makePlayerEntity()
   auto posComp = std::make_unique<PositionComponent>(1.0, 1.0);
   auto spriteComp = std::make_unique<SpriteComponent>(
     RESOURCE_PATH + std::string("spritesheets/player-move.png"),
-    2.0, 0, 0, 64, 64);
+    WORLD_TO_PIXEL_X/64.0, WORLD_TO_PIXEL_Y/64.0, 0, 0, 64, 64);
   auto hpComp = std::make_unique<StatComponent>(100);
   auto combatComp = std::make_unique<CombatComponent>(CombatComponent::Faction::Player);
   auto inputComp = std::make_unique<PlayerInputComponent>();
@@ -81,7 +81,7 @@ ecs::Entity makeMobEntity(double startX, double startY, bool loot = false)
   auto posComp = std::make_unique<PositionComponent>(startX, startY);
   auto spriteComp = std::make_unique<SpriteComponent>(
     RESOURCE_PATH + std::string("spritesheets/gargant-berserker-move.png"),
-    2.0, 0, 0, 64, 64);    
+    WORLD_TO_PIXEL_X/64.0, WORLD_TO_PIXEL_Y/64.0, 0, 0, 64, 64);    
   auto hpComp = std::make_unique<StatComponent>(100);
   auto combatComp = std::make_unique<CombatComponent>(CombatComponent::Faction::Enemy);
   auto aiComp = std::make_unique<AIComponent>();
@@ -118,7 +118,7 @@ ecs::Entity makeLevelEntity()
 
   auto tileComp = std::make_unique<TiledSpritesComponent>(
     RESOURCE_PATH + std::string("spritesheets/mainlevbuild.png"),
-    10, 4.0f, 736, 272, 32, 32);
+    10, WORLD_TO_PIXEL_X/32.0, WORLD_TO_PIXEL_Y/32.0, 736, 272, 32, 32);
 
   auto posComp = std::make_unique<PositionComponent>(0.0, 0.0);
 

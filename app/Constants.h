@@ -1,10 +1,15 @@
 #pragma once
 
-// 128 pixels is 1 world unit
-#define PIXEL_TO_WORLD 1.0/128.0 
-#define WORLD_TO_PIXEL 128.0
-
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
+
+#define LEVEL_SIZE_X 10
+#define LEVEL_SIZE_Y 6
+
+// 128 pixels is 1 world unit
+#define WORLD_TO_PIXEL_X SCREEN_WIDTH/LEVEL_SIZE_X
+#define WORLD_TO_PIXEL_Y SCREEN_HEIGHT/LEVEL_SIZE_Y
+#define PIXEL_TO_WORLD_X 1.0/WORLD_TO_PIXEL_X
+#define PIXEL_TO_WORLD_Y 1.0/WORLD_TO_PIXEL_Y 
 
 #define ABILITY_TEX_SIZE 64

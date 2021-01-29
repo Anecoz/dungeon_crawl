@@ -22,14 +22,16 @@ public:
   TiledSpritesComponent(
     const std::string& texPath,
     unsigned numTiles,
-    double scale,
+    double scaleX,
+    double scaleY,
     unsigned left,
     unsigned top,
     unsigned width,
     unsigned height) 
     : _texPath(texPath)
     , _numTiles(numTiles)
-    , _scale(scale)
+    , _scaleX(scaleX)
+    , _scaleY(scaleY)
     , _left(left)
     , _top(top)
     , _width(width)
@@ -46,16 +48,16 @@ public:
 
       spriteTile._sprite.setTexture(_textureAtlas);
       spriteTile._sprite.setTextureRect(sf::IntRect(_left, _top, _width, _height));
-      spriteTile._sprite.scale(static_cast<float>(_scale), static_cast<float>(_scale));
-      spriteTile._x = x * _width * _scale;
-      spriteTile._y = y * _height * _scale;
+      spriteTile._sprite.scale(static_cast<float>(_scaleX), static_cast<float>(_scaleY));
+      spriteTile._x = x * _width * _scaleX;
+      spriteTile._y = y * _height * _scaleY;
     }
   }
 
   ~TiledSpritesComponent() {}
 
   ecs::Component* clone() override {
-    auto comp = new TiledSpritesComponent(_texPath, _numTiles, _scale, _left, _top, _width, _height);
+    auto comp = new TiledSpritesComponent(_texPath, _numTiles, _scaleX, _scaleY, _left, _top, _width, _height);
     return comp;
   }
 
@@ -68,6 +70,6 @@ public:
 private:
   std::string _texPath;
   unsigned _numTiles;
-  double _scale;
+  double _scaleX, _scaleY;
   unsigned _left, _top, _width, _height;
 };

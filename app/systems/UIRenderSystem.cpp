@@ -30,7 +30,7 @@ void UIRenderSystem::run(ecs::Engine& engine)
     healthText.setCharacterSize(24);
     healthText.setString(std::to_string(statComp->_health) + std::string("/") + std::to_string(statComp->_maxHealth) + std::string(" HP"));
     auto bounds = healthText.getLocalBounds();
-    healthText.setPosition(static_cast<float>((posComp->_x * WORLD_TO_PIXEL) - bounds.width/2.0f), static_cast<float>((posComp->_y - 1.0f) * WORLD_TO_PIXEL));
+    healthText.setPosition(static_cast<float>((posComp->_x * WORLD_TO_PIXEL_X) - bounds.width/2.0f), static_cast<float>((posComp->_y - 1.0f) * WORLD_TO_PIXEL_Y));
     _window.draw(healthText);
 
     // Render available AP
@@ -39,7 +39,7 @@ void UIRenderSystem::run(ecs::Engine& engine)
     apText.setCharacterSize(24);
     apText.setString(std::to_string(statComp->_ap) + std::string(" AP"));
     auto apBounds = apText.getLocalBounds();
-    apText.setPosition(static_cast<float>((posComp->_x * WORLD_TO_PIXEL) - apBounds.width/2.0f), static_cast<float>((posComp->_y - 0.7f) * WORLD_TO_PIXEL));
+    apText.setPosition(static_cast<float>((posComp->_x * WORLD_TO_PIXEL_X) - apBounds.width/2.0f), static_cast<float>((posComp->_y - 0.7f) * WORLD_TO_PIXEL_Y));
     _window.draw(apText);
   }
 

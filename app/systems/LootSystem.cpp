@@ -9,6 +9,8 @@
 #include "../components/SpriteComponent.h"
 #include "../components/PositionComponent.h"
 
+#include "../Constants.h"
+
 #include <iostream>
 
 void LootSystem::run(ecs::Engine& engine)
@@ -27,6 +29,7 @@ void LootSystem::run(ecs::Engine& engine)
     
     auto spriteComp = std::make_unique<SpriteComponent>(
       RESOURCE_PATH + std::string("pickups/hp_pickup.png"),
+      1.0,
       1.0,
       0, 0,
       32, 32);

@@ -14,14 +14,16 @@ class SpriteComponent : public ecs::Component
 public:
   SpriteComponent(
     const std::string& texPath,
-    double scale,
+    double scaleX,
+    double scaleY,
     unsigned left,
     unsigned top,
     unsigned width,
     unsigned height) 
     : _orientation(Orientation::North)
     , _texPath(texPath)
-    , _scale(scale)
+    , _scaleX(scaleX)
+    , _scaleY(scaleY)
     , _left(left)
     , _top(top)
     , _width(width)
@@ -32,14 +34,14 @@ public:
     }
     _sprite.setTexture(_texture);
     _sprite.setTextureRect(sf::IntRect(_left, _top, _width, _height));
-    _sprite.scale(static_cast<float>(_scale), static_cast<float>(_scale));
+    _sprite.scale(static_cast<float>(_scaleX), static_cast<float>(_scaleY));
     _sprite.setOrigin(static_cast<float>(_width)/2.0f, static_cast<float>(_height)/2.0f);
   }
 
   ~SpriteComponent() {}
 
   ecs::Component* clone() override {
-    auto comp = new SpriteComponent(_texPath, _scale, _left, _top, _width, _height);
+    auto comp = new SpriteComponent(_texPath, _scaleX, _scaleY, _left, _top, _width, _height);
     comp->_orientation = _orientation;
     return comp;
   }
@@ -77,6 +79,6 @@ public:
 
 private:
   std::string _texPath;
-  double _scale;
+  double _scaleX, _scaleY;
   unsigned _left, _top, _width, _height;
 };

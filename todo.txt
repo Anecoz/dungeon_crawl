@@ -2,6 +2,7 @@
 
 - Implement scene changes, i.e. moving from room to room
 - Randomly spawn enemies
+- Make a movement system (or similar) that takes a "pending" movement, or velocity, and adds to pos. instead of spreading out posComp += everywhere
 - Armour and stats that affect damage
 - Make it clear in GUI that player is in combat, i.e. flashing red "COMBAT" sign or w/e, also "Your turn!"
 - Write "Enemy used <ability>" and "You used <ability>" in GUI when an ability is used, maybe also how much damage it did if possible?

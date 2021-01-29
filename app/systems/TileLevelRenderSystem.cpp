@@ -22,8 +22,8 @@ void TileLevelRenderSystem::run(ecs::Engine& engine)
 
     for (auto& spriteTile: spriteComp->_sprites) {
       spriteTile._sprite.setPosition(
-        static_cast<float>(WORLD_TO_PIXEL * posComp->_x + spriteTile._x),
-        static_cast<float>(WORLD_TO_PIXEL * posComp->_y + spriteTile._y));
+        static_cast<float>(WORLD_TO_PIXEL_X * posComp->_x + spriteTile._x),
+        static_cast<float>(WORLD_TO_PIXEL_Y * posComp->_y + spriteTile._y));
       _window.draw(spriteTile._sprite);
     }
   }
