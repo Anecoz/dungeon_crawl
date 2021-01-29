@@ -64,46 +64,72 @@ void applyAbility(ecs::Entity* self, ecs::Entity* target, AbilityComponent::Abil
   statComp->_ap -= ability._apCost;
 }
 
+static void makeNextTurn(ecs::Entity* entity)
+{
+  static_cast<StatComponent*>(entity->getComp(STAT_ID))->_ap++;
+  static_cast<CombatComponent*>(entity->getComp(COMBAT_ID))->_awaitingInput = true;
+}
+
+static void ensureTargets(const std::vector<ecs::EntityID>& fighters, ecs::Engine& engine)
+{
+  for (auto id: fighters) {
+    auto entity = engine.getEntityById(id);
+    auto combatComp = static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
+    
+    // Is the target in the fighters list?
+    auto findIt = std::find(fighters.begin(), fighters.end(), combatComp->_target);
+    if (findIt == fighters.end()) {
+      // Not in list, so find a new target
+      for (auto potentialTarget: fighters) {
+        if (potentialTarget == id) continue;
+        auto potTargetEnt = engine.getEntityById(potentialTarget);
+        auto tarCombatComp = static_cast<CombatComponent*>(potTargetEnt->getComp(COMBAT_ID));
+        if (tarCombatComp->_faction != combatComp->_faction) {
+          combatComp->_target = potentialTarget;
+          break;
+        }
+      }
+    }
+  }
+}
+
 void CombatSystem::run(ecs::Engine& engine)
 {
   // Deal with ongoing combat
+  ecs::EntityID thisRoundFighter;
   if (_ongoingFight) {
-    // Retrieve our figher entities
-    std::vector<ecs::Entity*> entities;
-    for (auto id: _fighters) {
-      entities.push_back(engine.getEntityById(id));
-    }
-
     // Figure out who's turn it is
-    for (auto it = entities.begin(); it != entities.end(); ++it) {
-      auto combatComp = static_cast<CombatComponent*>((*it)->getComp(COMBAT_ID));
+    for (auto it = _fighters.begin(); it != _fighters.end(); ++it) {
+      auto entity = engine.getEntityById(*it);
+      auto combatComp = static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
       if (combatComp->_awaitingInput && combatComp->_chosenAbility != -1) {
         // Apply the chosen ability. TODO: Deal with things like moving and fleeing? Also abilities?
-        auto abilityComp = static_cast<AbilityComponent*>((*it)->getComp(ABILITY_ID));        
+        auto abilityComp = static_cast<AbilityComponent*>(entity->getComp(ABILITY_ID));        
         if (!abilityComp) {
-          std::cout << "Entity with id " << std::to_string((*it)->id()) << " tried to choose an ability, but has no ability component!" << std::endl;
+          std::cout << "Entity with id " << std::to_string(entity->id()) << " tried to choose an ability, but has no ability component!" << std::endl;
           continue;
         }
 
-        std::cout << "Entity with id " << std::to_string((*it)->id()) << " chose ability " << std::to_string(combatComp->_chosenAbility) << "!" << std::endl;
-        applyAbility(*it, engine.getEntityById(combatComp->_target), abilityComp->_abilities[combatComp->_chosenAbility]);
+        std::cout << "Entity with id " << std::to_string(entity->id()) << " chose ability " << std::to_string(combatComp->_chosenAbility) << "!" << std::endl;
+        applyAbility(entity, engine.getEntityById(combatComp->_target), abilityComp->_abilities[combatComp->_chosenAbility]);
+
+        thisRoundFighter = *it;
 
         combatComp->_awaitingInput = false;
         combatComp->_chosenAbility = -1;
 
         // Choose the next entity who's turn it is
-        ecs::Entity* next = nullptr;
-        if (it + 1 != entities.end()) {
-          next = entities[it + 1 - entities.begin()];
+        ecs::EntityID next;
+        if (it + 1 != _fighters.end()) {
+          next = _fighters[it + 1 - _fighters.begin()];
         }
         else {
           // First one, wrap around
-          next = entities[0];
+          next = _fighters[0];
         }
-        std::cout << "It is now entity with id " << std::to_string(next->id()) << "'s turn!" << std::endl;
+        std::cout << "It is now entity with id " << std::to_string(next) << "'s turn!" << std::endl;
         // Let the comp know it's awaiting input and also give 1 more AP
-        static_cast<StatComponent*>(next->getComp(STAT_ID))->_ap++;
-        static_cast<CombatComponent*>(next->getComp(COMBAT_ID))->_awaitingInput = true;
+        makeNextTurn(engine.getEntityById(next));
         break;
       }
     }
@@ -135,6 +161,7 @@ void CombatSystem::run(ecs::Engine& engine)
 
       if (!(numPlayers > 0 && numEnemies > 0)) {
         for (auto entityID: _fighters) {
+          std::cout << "Fight is over!" << std::endl;
           auto entity = engine.getEntityById(entityID);
           auto combComp =  static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
           combComp->_inCombat = false;
@@ -143,14 +170,29 @@ void CombatSystem::run(ecs::Engine& engine)
           _fighters.clear();
         }
       }
-    }
-    else {
-      // No one left
-      _ongoingFight = false;
-    }
-
-    if (!_ongoingFight) {
-      std::cout << "Fight is over!" << std::endl;
+      else {
+        // Fight still going on, make sure that it's still someones turn (he might have died)
+        bool someonesTurn = false;
+        for (auto id: _fighters) {
+          auto entity = engine.getEntityById(id);
+          auto combComp = static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
+          if (combComp->_awaitingInput) {
+            someonesTurn = true;
+            break;
+          }
+        }
+        if (!someonesTurn) {
+          // Make the first entity in list that didn't fight this round the next turn
+          for (auto id: _fighters) {
+            if (id != thisRoundFighter) {
+              makeNextTurn(engine.getEntityById(id));
+              break;
+            }
+          }
+        }
+        // Also ensure everyone has a target (that is alive and so on)
+        ensureTargets(_fighters, engine);
+      }
     }
   }
   else {
