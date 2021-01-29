@@ -26,7 +26,8 @@ public:
 
   enum class Type
   {
-    Death
+    Death,
+    DoorReached
   } _type;
 
   std::unique_ptr<LootComponent> _lootComp;

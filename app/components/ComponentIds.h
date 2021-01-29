@@ -11,3 +11,4 @@
 #define EVENT_ID 8
 #define LOOT_ID 9
 #define PICKUP_ID 10
+#define DOOR_ID 11

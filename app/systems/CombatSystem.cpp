@@ -104,6 +104,13 @@ static void cleanseDead(std::vector<ecs::EntityID>& fighters, ecs::Engine& engin
   // can do the appropriate thing, like spawn loot
   for (auto it = fighters.begin(); it != fighters.end();) {
     auto entity = engine.getEntityById(*it);
+
+    // If the entity doesn't even exist, we might have changed level or something, assume death
+    if (!entity) {
+      it = fighters.erase(it);
+      continue;
+    }
+
     auto hpComp = static_cast<StatComponent*>(entity->getComp(STAT_ID));
     if (hpComp->_health <= 0) {
       if (auto lootBaseComp = entity->takeComp(LOOT_ID)) {
@@ -140,6 +147,10 @@ void CombatSystem::run(ecs::Engine& engine)
     // Figure out who's turn it is
     for (auto it = _fighters.begin(); it != _fighters.end(); ++it) {
       auto entity = engine.getEntityById(*it);
+
+      // Entity might have been deleted (changed level), this gets taken care of later
+      if (!entity) continue;
+
       auto combatComp = static_cast<CombatComponent*>(entity->getComp(COMBAT_ID));
       if (combatComp->_awaitingInput && combatComp->_chosenAbility != -1) {
         // Apply the chosen ability. TODO: Deal with things like moving and fleeing? Also abilities?

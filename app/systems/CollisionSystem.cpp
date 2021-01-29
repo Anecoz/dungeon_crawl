@@ -3,10 +3,13 @@
 #include "../components/PositionComponent.h"
 #include "../components/LootComponent.h"
 #include "../components/StatComponent.h"
+#include "../components/EventComponent.h"
 
 #include "../Helpers.h"
 
 #include "../ecs/Engine.h"
+
+#include <iostream>
 
 static void applyPickup(ecs::Entity* player, ecs::Entity* pickup)
 {
@@ -27,17 +30,31 @@ void CollisionSystem::run(ecs::Engine& engine)
 
   auto player = playerEntities[0];
   auto playerPosComp = static_cast<PositionComponent*>(player->getComp(POS_ID));
+
+  // Stuff that we're interested in colliding with
   auto pickups = engine.getEntitiesWithComp(PICKUP_ID);
+  auto doors = engine.getEntitiesWithComp(DOOR_ID);
 
   // Keep track of which entities to delete. If we delete immediately, the entity* addresses get
   // corrupt because they are reshuffled inside of the engine
   std::vector<ecs::EntityID> pendingDelete;
   for (auto pickup: pickups) {
     auto pickupPosComp = static_cast<PositionComponent*>(pickup->getComp(POS_ID));
-
     if (helpers::distance(playerPosComp, pickupPosComp) <= 0.9) {
       applyPickup(player, pickup);
       pendingDelete.push_back(pickup->id());
+    }
+  }
+
+  for (auto door: doors) {
+    auto doorPosComp = static_cast<PositionComponent*>(door->getComp(POS_ID));
+    if (helpers::distance(playerPosComp, doorPosComp) <= 0.9) {
+      // Create an event for the level system to react to
+      ecs::Entity eventEnt;
+      auto eventComp = std::make_unique<EventComponent>();
+      eventComp->_type = EventComponent::Type::DoorReached;
+      eventEnt.addComp(std::move(eventComp));
+      engine.addEntity(std::move(eventEnt));
     }
   }
 

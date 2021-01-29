@@ -77,7 +77,6 @@ public:
 
   Orientation _orientation;
 
-private:
   std::string _texPath;
   double _scaleX, _scaleY;
   unsigned _left, _top, _width, _height;

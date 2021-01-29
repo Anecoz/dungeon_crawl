@@ -15,6 +15,7 @@
 #include "components/AbilityComponent.h"
 #include "components/AIComponent.h"
 #include "components/LootComponent.h"
+#include "components/DoorComponent.h"
 
 #include "systems/InputSystem.h"
 #include "systems/SpriteRenderSystem.h"
@@ -24,6 +25,7 @@
 #include "systems/AISystem.h"
 #include "systems/LootSystem.h"
 #include "systems/CollisionSystem.h"
+#include "systems/LevelSystem.h"
 
 #include <iostream>
 
@@ -128,6 +130,25 @@ ecs::Entity makeLevelEntity()
   return entity;
 }
 
+ecs::Entity makeDoorEntity()
+{
+  ecs::Entity entity;
+
+  auto spriteComp = std::make_unique<SpriteComponent>(
+    RESOURCE_PATH + std::string("spritesheets/mainlevbuild.png"),
+    WORLD_TO_PIXEL_X/40.0, WORLD_TO_PIXEL_Y/49.0,
+    797, 55,
+    40, 49);
+  auto posComp = std::make_unique<PositionComponent>(LEVEL_SIZE_X - 1.0, 5.0);
+  auto doorComp = std::make_unique<DoorComponent>();
+  
+  entity.addComp(std::move(spriteComp));
+  entity.addComp(std::move(posComp));
+  entity.addComp(std::move(doorComp));
+
+  return entity;
+}
+
 void Game::run()
 {
   ecs::Engine ecsEngine;
@@ -140,12 +161,14 @@ void Game::run()
   ecsEngine.addSystem(std::make_unique<AISystem>());
   ecsEngine.addSystem(std::make_unique<LootSystem>());
   ecsEngine.addSystem(std::make_unique<CollisionSystem>());
+  ecsEngine.addSystem(std::make_unique<LevelSystem>());
 
   ecsEngine.addEntity(makePlayerEntity());
   ecsEngine.addEntity(makeLevelEntity());
   ecsEngine.addEntity(makeMobEntity(5.0, 3.0, true));
   ecsEngine.addEntity(makeMobEntity(4.0, 3.0, true));
   ecsEngine.addEntity(makeMobEntity(4.0, 4.0, true));
+  ecsEngine.addEntity(makeDoorEntity());
 
   sf::Clock clock;
   while (_window.isOpen()) {
