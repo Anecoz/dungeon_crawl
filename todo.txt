@@ -7,3 +7,4 @@
 - Make it clear in GUI that player is in combat, i.e. flashing red "COMBAT" sign or w/e, also "Your turn!"
 - Write "Enemy used <ability>" and "You used <ability>" in GUI when an ability is used, maybe also how much damage it did if possible?
 - Hover over abilities should show the name of ability + AP cost and damage
+- "fog of war"! Dark in a circle around player
