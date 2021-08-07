@@ -25,7 +25,7 @@ void LootSystem::run(ecs::Engine& engine)
     std::cout << "Received loot event" << std::endl;
 
     // Spawn a pickup entity with the loot component
-    ecs::Entity pickup;
+    auto pickup = std::make_unique<ecs::Entity>();
     
     auto spriteComp = std::make_unique<SpriteComponent>(
       RESOURCE_PATH + std::string("pickups/hp_pickup.png"),
@@ -36,10 +36,10 @@ void LootSystem::run(ecs::Engine& engine)
 
     auto pickupComp = std::make_unique<PickupComponent>();
     
-    pickup.addComp(std::move(spriteComp));
-    pickup.addComp(std::move(pickupComp));
-    pickup.addComp(std::move(eventComp->_posComp));
-    pickup.addComp(std::move(eventComp->_lootComp));
+    pickup->addComp(std::move(spriteComp));
+    pickup->addComp(std::move(pickupComp));
+    pickup->addComp(std::move(eventComp->_posComp));
+    pickup->addComp(std::move(eventComp->_lootComp));
 
     engine.addEntity(std::move(pickup));
 

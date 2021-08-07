@@ -20,7 +20,7 @@ public:
   Engine& operator=(const Engine&) = delete;
   Engine& operator=(Engine&&) = delete;
 
-  void addEntity(Entity&& entity);
+  void addEntity(std::unique_ptr<Entity>&& entity);
   void removeEntity(EntityID id);
   std::vector<Entity*> getEntitiesWithComp(ComponentID comp);
   Entity* getEntityById(EntityID id);
@@ -29,7 +29,7 @@ public:
 
   void runOnce();
 private:
-  std::vector<Entity> _entities;
+  std::vector<std::unique_ptr<Entity>> _entities;
   std::vector<std::unique_ptr<System>> _systems;
 };
 

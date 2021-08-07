@@ -35,14 +35,11 @@ void CollisionSystem::run(ecs::Engine& engine)
   auto pickups = engine.getEntitiesWithComp(PICKUP_ID);
   auto doors = engine.getEntitiesWithComp(DOOR_ID);
 
-  // Keep track of which entities to delete. If we delete immediately, the entity* addresses get
-  // corrupt because they are reshuffled inside of the engine
-  std::vector<ecs::EntityID> pendingDelete;
   for (auto pickup: pickups) {
     auto pickupPosComp = static_cast<PositionComponent*>(pickup->getComp(POS_ID));
     if (helpers::distance(playerPosComp, pickupPosComp) <= 0.9) {
       applyPickup(player, pickup);
-      pendingDelete.push_back(pickup->id());
+      engine.removeEntity(pickup->id());
     }
   }
 
@@ -50,16 +47,11 @@ void CollisionSystem::run(ecs::Engine& engine)
     auto doorPosComp = static_cast<PositionComponent*>(door->getComp(POS_ID));
     if (helpers::distance(playerPosComp, doorPosComp) <= 0.9) {
       // Create an event for the level system to react to
-      ecs::Entity eventEnt;
+      auto eventEnt = std::make_unique<ecs::Entity>();
       auto eventComp = std::make_unique<EventComponent>();
       eventComp->_type = EventComponent::Type::DoorReached;
-      eventEnt.addComp(std::move(eventComp));
+      eventEnt->addComp(std::move(eventComp));
       engine.addEntity(std::move(eventEnt));
     }
-  }
-
-  // Delete last, see comment above (maybe fix)
-  for (auto id: pendingDelete) {
-    engine.removeEntity(id);
   }
 }

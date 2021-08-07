@@ -115,7 +115,7 @@ static void cleanseDead(std::vector<ecs::EntityID>& fighters, ecs::Engine& engin
     if (hpComp->_health <= 0) {
       if (auto lootBaseComp = entity->takeComp(LOOT_ID)) {
         // Create an "event entity"
-        ecs::Entity event;
+        auto event = std::make_unique<ecs::Entity>();
         auto eventComp = std::make_unique<EventComponent>();
         eventComp->_type = EventComponent::Type::Death;
         auto lootComp = std::unique_ptr<LootComponent>(static_cast<LootComponent*>(lootBaseComp.release()));
@@ -123,7 +123,7 @@ static void cleanseDead(std::vector<ecs::EntityID>& fighters, ecs::Engine& engin
         auto posComp = std::unique_ptr<PositionComponent>(static_cast<PositionComponent*>(posBaseComp.release()));
         eventComp->_lootComp = std::move(lootComp);
         eventComp->_posComp = std::move(posComp);
-        event.addComp(std::move(eventComp));
+        event->addComp(std::move(eventComp));
         engine.addEntity(std::move(event));
       }      
 

@@ -40,9 +40,9 @@ bool Game::init()
   return fontcache::init();
 }
 
-ecs::Entity makePlayerEntity()
+std::unique_ptr<ecs::Entity> makePlayerEntity()
 {
-  ecs::Entity entity;
+  auto entity = std::make_unique<ecs::Entity>();
 
   auto posComp = std::make_unique<PositionComponent>(1.0, 1.0);
   auto spriteComp = std::make_unique<SpriteComponent>(
@@ -67,18 +67,19 @@ ecs::Entity makePlayerEntity()
   abilityComp->_abilities.emplace_back(std::move(ability4));
   abilityComp->_abilities.emplace_back(std::move(ability5));
 
-  entity.addComp(std::move(hpComp));
-  entity.addComp(std::move(spriteComp));
-  entity.addComp(std::move(posComp));
-  entity.addComp(std::move(combatComp));
-  entity.addComp(std::move(inputComp));
-  entity.addComp(std::move(abilityComp));
+  entity->addComp(std::move(hpComp));
+  entity->addComp(std::move(spriteComp));
+  entity->addComp(std::move(posComp));
+  entity->addComp(std::move(combatComp));
+  entity->addComp(std::move(inputComp));
+  entity->addComp(std::move(abilityComp));
+
   return entity;
 }
 
-ecs::Entity makeMobEntity(double startX, double startY, bool loot = false)
+std::unique_ptr<ecs::Entity> makeMobEntity(double startX, double startY, bool loot = false)
 {
-  ecs::Entity entity;
+  auto entity = std::make_unique<ecs::Entity>();
 
   auto posComp = std::make_unique<PositionComponent>(startX, startY);
   auto spriteComp = std::make_unique<SpriteComponent>(
@@ -102,21 +103,21 @@ ecs::Entity makeMobEntity(double startX, double startY, bool loot = false)
     auto lootComp = std::make_unique<LootComponent>();
     lootComp->_type = LootComponent::Type::Health;
     lootComp->_hp = 10;
-    entity.addComp(std::move(lootComp));
+    entity->addComp(std::move(lootComp));
   }
 
-  entity.addComp(std::move(hpComp));
-  entity.addComp(std::move(spriteComp));
-  entity.addComp(std::move(posComp));
-  entity.addComp(std::move(combatComp));
-  entity.addComp(std::move(abilityComp));
-  entity.addComp(std::move(aiComp));
+  entity->addComp(std::move(hpComp));
+  entity->addComp(std::move(spriteComp));
+  entity->addComp(std::move(posComp));
+  entity->addComp(std::move(combatComp));
+  entity->addComp(std::move(abilityComp));
+  entity->addComp(std::move(aiComp));
   return entity;
 }
 
-ecs::Entity makeLevelEntity()
+std::unique_ptr<ecs::Entity> makeLevelEntity()
 {
-  ecs::Entity entity;
+  auto entity = std::make_unique<ecs::Entity>();
 
   auto tileComp = std::make_unique<TiledSpritesComponent>(
     RESOURCE_PATH + std::string("spritesheets/mainlevbuild.png"),
@@ -124,15 +125,15 @@ ecs::Entity makeLevelEntity()
 
   auto posComp = std::make_unique<PositionComponent>(0.0, 0.0);
 
-  entity.addComp(std::move(tileComp));
-  entity.addComp(std::move(posComp));
+  entity->addComp(std::move(tileComp));
+  entity->addComp(std::move(posComp));
 
   return entity;
 }
 
-ecs::Entity makeDoorEntity()
+std::unique_ptr<ecs::Entity> makeDoorEntity()
 {
-  ecs::Entity entity;
+  auto entity = std::make_unique<ecs::Entity>();
 
   auto spriteComp = std::make_unique<SpriteComponent>(
     RESOURCE_PATH + std::string("spritesheets/mainlevbuild.png"),
@@ -142,9 +143,9 @@ ecs::Entity makeDoorEntity()
   auto posComp = std::make_unique<PositionComponent>(LEVEL_SIZE_X - 1.0, 5.0);
   auto doorComp = std::make_unique<DoorComponent>();
   
-  entity.addComp(std::move(spriteComp));
-  entity.addComp(std::move(posComp));
-  entity.addComp(std::move(doorComp));
+  entity->addComp(std::move(spriteComp));
+  entity->addComp(std::move(posComp));
+  entity->addComp(std::move(doorComp));
 
   return entity;
 }
@@ -166,8 +167,8 @@ void Game::run()
   ecsEngine.addEntity(makePlayerEntity());
   ecsEngine.addEntity(makeLevelEntity());
   ecsEngine.addEntity(makeMobEntity(5.0, 3.0, true));
-  ecsEngine.addEntity(makeMobEntity(4.0, 3.0, true));
   ecsEngine.addEntity(makeMobEntity(4.0, 4.0, true));
+  ecsEngine.addEntity(makeMobEntity(4.0, 3.0, true));
   ecsEngine.addEntity(makeDoorEntity());
 
   sf::Clock clock;
