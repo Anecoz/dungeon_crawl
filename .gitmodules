@@ -1,0 +1,3 @@
+[submodule "app/ecs"]
+	path = app/ecs
+	url = https://github.com/Anecoz/ecs.git
